@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2a24">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Reinvention">
+<title>12-Week Reinvention</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon.svg">
+<style>
+:root{
+  --bg:#f4f1ea; --card:#fffdf8; --ink:#1f2a24; --muted:#6b736d; --line:#e2ddd2;
+  --accent:#2f6b4f; --accent-soft:#dcebe2; --min:#c48a2c; --min-soft:#f6ead3;
+  --alpha:#2f6b4f; --bravo:#2c5a8a; --charlie:#9a4b3c;
+  --r:14px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 14px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#141815;--card:#1d221f;--ink:#e9ece8;--muted:#9aa39c;--line:#2d342f;
+  --accent:#6fbf95;--accent-soft:#23382c;--min:#e0a94d;--min-soft:#3a2f1c;
+  --alpha:#6fbf95;--bravo:#7aa8d8;--charlie:#d88a78;--shadow:none}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans",sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px calc(96px + env(safe-area-inset-bottom))}
+header{padding:8px 2px 14px}
+header .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header h1{font-size:24px;margin:2px 0 0;font-weight:700;letter-spacing:-.01em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;font-weight:600}
+.card h3{font-size:17px;margin:0 0 6px}
+.muted{color:var(--muted)} .small{font-size:13px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.pill{display:inline-block;font-size:12px;padding:3px 9px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 13px;font:inherit;font-size:14px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.icon{width:40px;height:40px;padding:0;font-size:18px}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.progress>i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+
+/* habits */
+.habit{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.habit:first-of-type{border-top:0}
+.habit .txt{flex:1;min-width:0}
+.habit .name{font-weight:600}
+.habit .hint{font-size:13px;color:var(--muted)}
+.tog{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex-shrink:0}
+.tog button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;font-weight:600;padding:9px 11px;cursor:pointer;min-width:44px}
+.tog button+button{border-left:1px solid var(--line)}
+.tog button.on.y{background:var(--accent);color:#fff}
+.tog button.on.m{background:var(--min);color:#fff}
+textarea,input[type=text],input[type=number]{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:76px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 5px}
+
+/* week grid */
+.grid{width:100%;border-collapse:collapse;font-size:13px}
+.grid th,.grid td{padding:6px 2px;text-align:center;border-bottom:1px solid var(--line)}
+.grid th:first-child,.grid td:first-child{text-align:left;padding-left:0}
+.grid th{color:var(--muted);font-weight:600;font-size:12px}
+.grid th.today{color:var(--accent)}
+.dot{width:24px;height:24px;border-radius:7px;display:inline-grid;place-items:center;font-size:11px;font-weight:700;background:var(--bg);border:1px solid var(--line);cursor:pointer;color:var(--muted)}
+.dot.y{background:var(--accent);border-color:var(--accent);color:#fff}
+.dot.m{background:var(--min);border-color:var(--min);color:#fff}
+.stat{flex:1;text-align:center;padding:10px 4px;border-radius:10px;background:var(--bg)}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stats{display:flex;gap:8px;margin-top:12px}
+.stat.hit b{color:var(--accent)}
+
+/* plan */
+.proj{border-left:4px solid var(--alpha);padding:4px 0 4px 12px;margin:12px 0}
+.proj.b{border-color:var(--bravo)} .proj.c{border-color:var(--charlie)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl td,.tbl th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th{font-size:12px;color:var(--muted);font-weight:600}
+ul.clean{padding-left:18px;margin:6px 0} ul.clean li{margin:4px 0}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.check:first-of-type{border-top:0}
+.check input{width:20px;height:20px;accent-color:var(--accent);flex-shrink:0;margin-top:1px}
+.check.done span{text-decoration:line-through;color:var(--muted)}
+details{border-top:1px solid var(--line);padding:10px 0}
+details:first-of-type{border-top:0}
+summary{cursor:pointer;font-weight:600;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";float:right;color:var(--muted)}
+details[open] summary::after{content:"–"}
+.phase{display:flex;gap:6px;margin-top:10px}
+.phase div{flex:1;height:6px;border-radius:99px;background:var(--line)}
+.phase div.on{background:var(--accent)}
+.quote{font-style:italic;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin:8px 0}
+
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
+  display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:10}
+nav .in{display:flex;max-width:720px;width:100%}
+nav button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-size:11px;font-weight:600;padding:6px 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button svg{width:22px;height:22px}
+nav button.on{color:var(--accent)}
+.view{display:none}.view.on{display:block}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="hdrEyebrow">12-Week Personal Reinvention</div>
+    <h1 id="hdrTitle">Today</h1>
+  </header>
+
+  <!-- TODAY -->
+  <section class="view on" id="v-today">
+    <div class="card" id="statusCard"></div>
+    <div class="card">
+      <div class="row between" style="margin-bottom:6px">
+        <button class="btn icon" id="prevDay" aria-label="Previous day">‹</button>
+        <div style="text-align:center">
+          <div style="font-weight:700" id="dayLabel"></div>
+          <div class="small muted" id="dayFocus"></div>
+        </div>
+        <button class="btn icon" id="nextDay" aria-label="Next day">›</button>
+      </div>
+      <div class="small muted" style="text-align:center;margin-bottom:8px">Tap <b>Y</b> when done, <b>M</b> for the minimum version. Minimum counts.</div>
+      <div id="habitList"></div>
+      <label class="f" for="dayNote">Notes / next action</label>
+      <textarea id="dayNote" placeholder="One line is enough"></textarea>
+      <div class="row" style="margin-top:10px;justify-content:center">
+        <button class="btn" id="goToday">Jump to today</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEEK -->
+  <section class="view" id="v-week">
+    <div class="card">
+      <div class="row between">
+        <button class="btn icon" id="prevWeek" aria-label="Previous week">‹</button>
+        <div style="text-align:center">
+          <div style="font-weight:700" id="weekLabel"></div>
+          <div class="small muted" id="weekPhase"></div>
+        </div>
+        <button class="btn icon" id="nextWeek" aria-label="Next week">›</button>
+      </div>
+      <div style="overflow-x:auto;margin-top:12px"><table class="grid" id="weekGrid"></table></div>
+      <div class="stats" id="weekStats"></div>
+      <div style="margin-top:14px">
+        <div class="row between small"><span class="muted">Commitments kept</span><b id="pctLabel"></b></div>
+        <div class="progress" style="margin-top:6px"><i id="pctBar"></i></div>
+        <div class="small muted" style="margin-top:6px" id="pctNote"></div>
+      </div>
+    </div>
+    <div class="card" id="milestoneCard"></div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="view" id="v-review">
+    <div class="card">
+      <div class="row between">
+        <button class="btn icon" id="prevRev" aria-label="Previous week">‹</button>
+        <div style="text-align:center">
+          <div style="font-weight:700" id="revLabel"></div>
+          <div class="small muted">Sunday 20-minute review</div>
+        </div>
+        <button class="btn icon" id="nextRev" aria-label="Next week">›</button>
+      </div>
+      <div class="stats" id="revStats"></div>
+      <div class="row" style="gap:12px;margin-top:4px">
+        <div style="flex:1"><label class="f" for="rCommunity">Community activities</label><input type="number" min="0" inputmode="numeric" id="rCommunity"></div>
+        <div style="flex:1"><label class="f">Money review</label>
+          <div class="tog" id="rMoney"><button data-v="Y">Done</button><button data-v="N">Not yet</button></div></div>
+      </div>
+      <label class="f" for="rWins">Three specific wins</label>
+      <textarea id="rWins"></textarea>
+      <label class="f" for="rFriction">Hardest habit, and what friction caused it</label>
+      <textarea id="rFriction"></textarea>
+      <label class="f" for="rSimplify">What can I remove, simplify or prepare in advance?</label>
+      <textarea id="rSimplify"></textarea>
+      <label class="f">Next week's 3 priorities (work, health, relationships)</label>
+      <input type="text" id="rP1" placeholder="Work" style="margin-bottom:6px">
+      <input type="text" id="rP2" placeholder="Health" style="margin-bottom:6px">
+      <input type="text" id="rP3" placeholder="Relationships">
+      <label class="f">Before the week begins</label>
+      <div id="rSchedule"></div>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="view" id="v-plan">
+    <div class="card">
+      <h2>First 30 minutes</h2>
+      <div id="first30"></div>
+    </div>
+    <div class="card">
+      <h2>Three active projects</h2>
+      <div class="proj"><h3>Alpha · Physical foundation</h3>
+        <div class="small">Re-establish a sustainable training routine. Improve energy, strength and conditioning.</div>
+        <div class="small muted">Weekly: 2–3 gym or boxing sessions, plus easy walking.</div></div>
+      <div class="proj b"><h3>Bravo · Financial & business foundation</h3>
+        <div class="small">A clear monthly money system. Validate one small, testable version of the app.</div>
+        <div class="small muted">Weekly: one money review + two focused app blocks.</div></div>
+      <div class="proj c"><h3>Charlie · Social & community foundation</h3>
+        <div class="small">Recurring contact through church, sport or a hobby. Friendships, not dating, as the scorecard.</div>
+        <div class="small muted">Weekly: one in-person community activity + one intentional reach-out.</div></div>
+    </div>
+    <div class="card">
+      <h2>Habits: minimum vs normal</h2>
+      <table class="tbl">
+        <tr><th>Habit</th><th>Minimum</th><th>Normal</th></tr>
+        <tr><td>Walk / outside</td><td>5 min outside</td><td>10–20 min, after waking or work</td></tr>
+        <tr><td>Training</td><td>Put on kit / 5-min mobility</td><td>2 sessions/week, booked</td></tr>
+        <tr><td>App / business</td><td>Open project, write next action</td><td>2 × 25-min blocks, set evenings</td></tr>
+        <tr><td>Social</td><td>Send one genuine message</td><td>1 activity + 1 reach-out weekly</td></tr>
+        <tr><td>Money</td><td>Record today's spending</td><td>10-min weekly review</td></tr>
+      </table>
+      <p class="quote small">A short walk is not a failed workout. A 25-minute block is not a failed work session.</p>
+    </div>
+    <div class="card">
+      <h2>Weekly template</h2>
+      <table class="tbl" id="templateTbl"></table>
+    </div>
+    <div class="card">
+      <h2>12-week ramp-up</h2>
+      <div id="rampUp"></div>
+    </div>
+    <div class="card">
+      <h2>Habit design rules</h2>
+      <ol style="padding-left:20px;margin:0" class="small">
+        <li><b>Attach to anchors.</b> After breakfast, walk. After arriving home, change into training clothes.</li>
+        <li><b>Prepare the environment.</b> Clothes out, book visible, next app task written down.</li>
+        <li><b>Reduce friction.</b> Close gym, repeatable meals, fixed review time.</li>
+        <li><b>Floor, not ceiling.</b> The minimum counts. Consistency is the target.</li>
+        <li><b>Never punish a miss.</b> No doubling up. Resume at the next scheduled opportunity.</li>
+        <li><b>Protect sleep.</b> Don't trade sleep for habits. Get qualified advice for pain or injury.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h2>The rest of the list</h2>
+      <p class="small"><b>Enjoy, low pressure:</b> games, FFXIV, parks with Momoko, exploring Japan, cooking, reading, hobbies.</p>
+      <p class="small"><b>Parked until the foundation is stable:</b> influencer targets, book, cold-approach quotas, extra business ideas, car and house hunting.</p>
+      <p class="small"><b>Dating:</b> stay open, but no weekly KPI. Prioritize real-world social life and readiness.</p>
+      <label class="f" for="parkLot">Idea parking lot</label>
+      <textarea id="parkLot" placeholder="Capture ideas here so they don't take over the week"></textarea>
+    </div>
+    <div class="card">
+      <h2>Data</h2>
+      <p class="small muted">Everything saves in this browser. Back up now and then, especially before clearing browser data or switching devices.</p>
+      <div class="row" style="flex-wrap:wrap;gap:8px">
+        <button class="btn" id="exportJson">Back up (JSON)</button>
+        <button class="btn" id="importJson">Restore</button>
+        <button class="btn" id="exportCsv">Export CSV</button>
+        <button class="btn" id="resetAll">Reset</button>
+        <input type="file" id="fileIn" accept="application/json" hidden>
+      </div>
+    </div>
+    <p class="quote small" style="text-align:center;border:0">Success is not a perfect streak. It's returning quickly, keeping promises small enough to honour, and raising the standard when the foundation is real.</p>
+  </section>
+</div>
+
+<nav><div class="in">
+  <button data-v="today" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>Today</button>
+  <button data-v="week"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Week</button>
+  <button data-v="review"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13 7l4 4"/></svg>Review</button>
+  <button data-v="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Plan</button>
+</div></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+const START = new Date(2026,10,30); // Mon 30 Nov 2026
+const END = new Date(2027,1,21);    // Sun 21 Feb 2027
+const DAY = 86400000;
+const KEY = 'reinvention-12wk-v1';
+
+const HABITS = [
+  {id:'walk', name:'Walk / outside', min:'5 minutes outside', norm:'10–20 minutes'},
+  {id:'train', name:'Training', min:'Put on kit / 5-min mobility', norm:'Gym or boxing session'},
+  {id:'app', name:'App focus block', min:'Open project, write next action', norm:'25-minute focus block'},
+  {id:'social', name:'Social touchpoint', min:'Send one genuine message', norm:'Activity or real conversation'},
+  {id:'read', name:'Read / Japanese', min:'One page or 5 minutes', norm:'10+ minutes', optional:true},
+  {id:'voice', name:'Voice practice', min:'2 minutes', norm:'10 minutes', optional:true},
+  {id:'sleep', name:'Sleep protected', min:'Lights out on time', norm:'Full night, no late screens'}
+];
+const TEMPLATE = ['Strength / gym + set the week\'s three priorities','25–45 min app block + short walk','Boxing or gym. Keep the evening light','25–45 min app block + Japanese / reading','Rest, friends, or relaxed recreation','Community activity, church event, outing or longer training','Mass / spiritual time, weekly review, money check, calendar setup'];
+const DAYNAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const PHASES = [
+  {name:'Stabilize',weeks:[1,2],health:'Two sessions/week; short walks',money:'Money snapshot; define app problem',social:'Choose one recurring group; attend once',
+   bullets:['Keep the first-14-day habits only. Book two training sessions each week.','Choose one recurring community option: church, boxing, FFXIV group, language exchange or hobby meetup.','Write down monthly income, fixed costs, debt, savings and the next financial action.','For the app, define one user problem and the smallest test that proves people want a solution.']},
+  {name:'Repeat',weeks:[3,4],health:'Build toward 2–3 sessions/week',money:'Two app blocks/week; automate sustainable saving',social:'One activity/week; follow up with one person',
+   bullets:['If weeks 1–2 felt manageable, move toward three training sessions (not mandatory).','Keep two app blocks. End each by writing the next physical action.','One community activity each week. Follow up with one person you enjoyed talking to.','Start a simple spending and savings routine. Automate only what you can maintain.']},
+  {name:'Build',weeks:[5,8],health:'Aim for 3 sessions/week if recovery allows',money:'Test app with 5–10 potential users',social:'Keep recurring activity; optional Japanese/reading/voice habit',
+   bullets:['Aim for 3 training sessions, boxing as one option. Keep at least one recovery day.','Move to 3 × 45-min app blocks only after two consistent weeks at the previous level.','Run a small validation test: 5–10 conversations, a landing page, prototype or waitlist.','Add one optional habit: 10 minutes of Japanese, reading or voice, 3–5 days a week.']},
+  {name:'Consolidate',weeks:[9,12],health:'Keep a routine you can sustain',money:'Review evidence and set next 90-day target',social:'Choose next-quarter community commitment',
+   bullets:['Keep what is sustainable. Don\'t add more because the plan is ending.','Review app evidence: who has the problem, what they tried, what they\'d pay for, what to build next.','Review finances and set the next 90-day savings / debt / income target.','Choose the next community commitment and one enjoyable personal goal.']}
+];
+const FIRST30 = ['Put two training sessions into your calendar for the coming week','Choose two 25-minute app blocks and write the first task for each','Pick one church, sports or hobby activity to attend this week','Create a monthly money snapshot: income, fixed costs, debt, savings','Prepare walking shoes / gym clothes for tomorrow'];
+const SCHED = ['Training sessions booked','Two app blocks scheduled','One community activity chosen'];
+
+// ---------- storage ----------
+let S = {days:{}, reviews:{}, first30:{}, park:''};
+let memOnly = false;
+try{ const raw = localStorage.getItem(KEY); if(raw) S = Object.assign(S, JSON.parse(raw)); }catch(e){ memOnly = true; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ memOnly = true; } }
+
+// ---------- dates ----------
+const strip = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const key = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const addDays = (d,n) => new Date(d.getFullYear(), d.getMonth(), d.getDate()+n);
+const fmt = (d,o) => d.toLocaleDateString('en-GB', o||{weekday:'short',day:'numeric',month:'short'});
+const dow = d => (d.getDay()+6)%7; // Mon=0
+const weekOf = d => Math.floor((strip(d)-START)/DAY/7)+1; // may be <1 or >12
+const weekStart = w => addDays(START,(w-1)*7);
+const phaseOf = w => PHASES.find(p => w>=p.weeks[0] && w<=p.weeks[1]);
+const clampW = w => Math.max(1, Math.min(12, w));
+
+const today = strip(new Date());
+let curDay = today < START ? START : (today > END ? END : today);
+let curWeek = clampW(weekOf(curDay));
+let revWeek = clampW(weekOf(today));
+
+// ---------- helpers ----------
+const $ = id => document.getElementById(id);
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),1600); }
+function dayData(k){ return S.days[k] || (S.days[k] = {}); }
+function rev(w){ return S.reviews[w] || (S.reviews[w] = {}); }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function weekCounts(w){
+  const c = {}; HABITS.forEach(h=>c[h.id]=0);
+  for(let i=0;i<7;i++){ const d=S.days[key(addDays(weekStart(w),i))]; if(!d) continue;
+    HABITS.forEach(h=>{ if(d[h.id]==='Y'||d[h.id]==='M') c[h.id]++; }); }
+  return c;
+}
+function trainTarget(w){ return w>=5 && w<=8 ? 3 : 2; }
+function weekScore(w){
+  const c = weekCounts(w), r = S.reviews[w]||{};
+  const parts = [[c.walk,7],[c.train,trainTarget(w)],[c.app,2],[c.social,1],[+r.community||0,1],[r.money==='Y'?1:0,1]];
+  let got=0,tot=0; parts.forEach(([a,t])=>{got+=Math.min(a,t);tot+=t;});
+  return Math.round(got/tot*100);
+}
+
+// ---------- TODAY ----------
+function renderStatus(){
+  const el = $('statusCard');
+  if(today < START){
+    const n = Math.round((START-today)/DAY);
+    el.innerHTML = `<h2>Starts Monday 30 November</h2>
+      <div style="font-size:28px;font-weight:700">${n} day${n===1?'':'s'} to go</div>
+      <p class="small muted" style="margin:6px 0 0">Use the time to do the first 30 minutes in the Plan tab. Start smaller than your ambition.</p>`;
+    return;
+  }
+  const w = clampW(weekOf(today)), p = phaseOf(w);
+  const dayN = Math.min(84, Math.round((today-START)/DAY)+1);
+  el.innerHTML = `<div class="row between"><div><h2 style="margin:0">Week ${w} of 12</h2>
+      <div style="font-size:22px;font-weight:700">${p.name}</div></div>
+      <span class="pill">Day ${dayN} / 84</span></div>
+    <div class="phase">${PHASES.map(x=>`<div class="${x.weeks[0]<=w?'on':''}"></div>`).join('')}</div>
+    <p class="small muted" style="margin:10px 0 0">${today>END?'Plan complete. Time to set the next 90 days.':'Missed something? Resume at the next scheduled opportunity. No doubling up.'}</p>`;
+}
+function renderDay(){
+  const k = key(curDay), d = dayData(k), w = weekOf(curDay);
+  $('dayLabel').textContent = fmt(curDay,{weekday:'long',day:'numeric',month:'long'});
+  $('dayFocus').textContent = (w>=1&&w<=12?`Week ${w} · `:'') + TEMPLATE[dow(curDay)];
+  $('prevDay').disabled = curDay <= START; $('nextDay').disabled = curDay >= END;
+  const w0 = clampW(w);
+  $('habitList').innerHTML = HABITS.map(h=>{
+    const v = d[h.id]||'';
+    const opt = h.optional && w0<5 ? ' <span class="small muted">(optional, from week 5)</span>' : '';
+    return `<div class="habit"><div class="txt"><div class="name">${h.name}${opt}</div>
+      <div class="hint">Min: ${h.min}</div></div>
+      <div class="tog" data-h="${h.id}">
+        <button class="y ${v==='Y'?'on':''}" data-v="Y">Y</button>
+        <button class="m ${v==='M'?'on':''}" data-v="M">M</button></div></div>`;
+  }).join('');
+  $('dayNote').value = d.note||'';
+}
+$('habitList').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  const h = b.parentElement.dataset.h, d = dayData(key(curDay));
+  d[h] = d[h]===b.dataset.v ? '' : b.dataset.v;
+  save(); renderDay();
+  if(d[h]==='M') toast('Minimum counts');
+});
+$('dayNote').addEventListener('input', e=>{ dayData(key(curDay)).note = e.target.value; save(); });
+$('prevDay').onclick = ()=>{ curDay = addDays(curDay,-1); renderDay(); };
+$('nextDay').onclick = ()=>{ curDay = addDays(curDay,1); renderDay(); };
+$('goToday').onclick = ()=>{ curDay = today<START?START:(today>END?END:today); renderDay(); };
+
+// ---------- WEEK ----------
+function renderWeek(){
+  const w = curWeek, ws = weekStart(w), p = phaseOf(w);
+  $('weekLabel').textContent = `Week ${w} · ${fmt(ws,{day:'numeric',month:'short'})} – ${fmt(addDays(ws,6),{day:'numeric',month:'short'})}`;
+  $('weekPhase').textContent = `${p.name} phase`;
+  $('prevWeek').disabled = w<=1; $('nextWeek').disabled = w>=12;
+  let html = '<tr><th></th>' + DAYNAMES.map((n,i)=>`<th class="${key(addDays(ws,i))===key(today)?'today':''}">${n[0]}${n[1]}</th>`).join('') + '</tr>';
+  HABITS.forEach(h=>{
+    html += `<tr><td>${{walk:'Walk',train:'Training',app:'App',social:'Social',read:'Read / JP',voice:'Voice',sleep:'Sleep'}[h.id]}</td>`;
+    for(let i=0;i<7;i++){ const k=key(addDays(ws,i)), v=(S.days[k]||{})[h.id]||'';
+      html += `<td><span class="dot ${v.toLowerCase()}" data-k="${k}" data-h="${h.id}">${v}</span></td>`; }
+    html += '</tr>';
+  });
+  $('weekGrid').innerHTML = html;
+  const c = weekCounts(w), r = S.reviews[w]||{};
+  const items = [['Training',c.train,`${trainTarget(w)===3?'3':'2–3'}`,trainTarget(w)],['App',c.app,'2',2],['Community',+r.community||0,'1',1],['Money',r.money==='Y'?'✓':'–','',1]];
+  $('weekStats').innerHTML = items.map(([l,a,t,n])=>`<div class="stat ${(a==='✓'||+a>=n)?'hit':''}"><b>${a}${t?`<span style="font-size:13px;color:var(--muted)"> / ${t}</span>`:''}</b><span>${l}</span></div>`).join('');
+  const pct = weekScore(w);
+  $('pctLabel').textContent = pct+'%'; $('pctBar').style.width = pct+'%';
+  $('pctNote').textContent = pct>=70 ? 'At or above the 70% line. That is a good week.' : 'Target is 70%. Community and money are logged in the Review tab.';
+  $('milestoneCard').innerHTML = `<h2>${p.name} milestones · weeks ${p.weeks[0]}–${p.weeks[1]}</h2>
+    <table class="tbl"><tr><td style="width:34%"><b style="color:var(--alpha)">Health</b></td><td>${p.health}</td></tr>
+    <tr><td><b style="color:var(--bravo)">Money & business</b></td><td>${p.money}</td></tr>
+    <tr><td><b style="color:var(--charlie)">Community</b></td><td>${p.social}</td></tr></table>`;
+}
+$('weekGrid').addEventListener('click', e=>{
+  const s = e.target.closest('.dot'); if(!s) return;
+  const d = dayData(s.dataset.k), cur = d[s.dataset.h]||'';
+  d[s.dataset.h] = cur===''?'Y':cur==='Y'?'M':''; save(); renderWeek();
+});
+$('prevWeek').onclick = ()=>{ curWeek--; renderWeek(); };
+$('nextWeek').onclick = ()=>{ curWeek++; renderWeek(); };
+
+// ---------- REVIEW ----------
+const RF = {rCommunity:'community',rWins:'wins',rFriction:'friction',rSimplify:'simplify',rP1:'p1',rP2:'p2',rP3:'p3'};
+function renderReview(){
+  const w = revWeek, r = rev(w), ws = weekStart(w), c = weekCounts(w);
+  $('revLabel').textContent = `Week ${w} · ${fmt(ws,{day:'numeric',month:'short'})}`;
+  $('prevRev').disabled = w<=1; $('nextRev').disabled = w>=12;
+  Object.entries(RF).forEach(([id,f])=>{ $(id).value = r[f]??''; });
+  [...$('rMoney').children].forEach(b=>b.className = r.money===b.dataset.v ? 'on '+(b.dataset.v==='Y'?'y':'m') : '');
+  const pct = weekScore(w);
+  $('revStats').innerHTML = `<div class="stat ${c.train>=2?'hit':''}"><b>${c.train}</b><span>Training</span></div>
+    <div class="stat ${c.app>=2?'hit':''}"><b>${c.app}</b><span>App blocks</span></div>
+    <div class="stat ${c.walk>=5?'hit':''}"><b>${c.walk}</b><span>Walks</span></div>
+    <div class="stat ${pct>=70?'hit':''}"><b>${pct}%</b><span>Kept</span></div>`;
+  r.sched = r.sched||{};
+  $('rSchedule').innerHTML = SCHED.map((t,i)=>`<label class="check ${r.sched[i]?'done':''}"><input type="checkbox" data-i="${i}" ${r.sched[i]?'checked':''}><span>${t}</span></label>`).join('');
+}
+Object.entries(RF).forEach(([id,f])=>{ $(id).addEventListener('input', e=>{ rev(revWeek)[f]=e.target.value; save(); if(f==='community') renderReview(); }); });
+$('rMoney').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; const r=rev(revWeek); r.money = r.money===b.dataset.v?'':b.dataset.v; save(); renderReview(); });
+$('rSchedule').addEventListener('change', e=>{ const r=rev(revWeek); r.sched=r.sched||{}; r.sched[e.target.dataset.i]=e.target.checked; save(); renderReview(); });
+$('prevRev').onclick = ()=>{ revWeek--; renderReview(); };
+$('nextRev').onclick = ()=>{ revWeek++; renderReview(); };
+
+// ---------- PLAN ----------
+function renderPlan(){
+  $('first30').innerHTML = FIRST30.map((t,i)=>`<label class="check ${S.first30[i]?'done':''}"><input type="checkbox" data-i="${i}" ${S.first30[i]?'checked':''}><span>${t}</span></label>`).join('');
+  $('templateTbl').innerHTML = DAYNAMES.map((d,i)=>`<tr><td style="width:30%"><b>${d}</b></td><td>${TEMPLATE[i]}</td></tr>`).join('');
+  const cw = today<START?1:clampW(weekOf(today));
+  $('rampUp').innerHTML = PHASES.map(p=>`<details ${cw>=p.weeks[0]&&cw<=p.weeks[1]?'open':''}><summary>Weeks ${p.weeks[0]}–${p.weeks[1]} · ${p.name}</summary><ul class="clean small">${p.bullets.map(b=>`<li>${esc(b)}</li>`).join('')}</ul></details>`).join('');
+  $('parkLot').value = S.park||'';
+}
+$('first30').addEventListener('change', e=>{ S.first30[e.target.dataset.i]=e.target.checked; save(); renderPlan(); });
+$('parkLot').addEventListener('input', e=>{ S.park=e.target.value; save(); });
+
+let dl = null;
+if(window.claude && typeof window.claude.use==='function'){
+  window.claude.use('downloads').then(x=>{ dl = x; }).catch(()=>{});
+}
+async function download(name, text, type){
+  if(dl){
+    try{ await dl.save({filename:name, data:text}); toast('Saved'); }
+    catch(e){ toast('Save cancelled'); }
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text],{type}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+}
+$('exportJson').onclick = ()=>{ download(`reinvention-backup-${key(today)}.json`, JSON.stringify(S,null,2), 'application/json'); };
+$('importJson').onclick = ()=> $('fileIn').click();
+$('fileIn').onchange = e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{ try{ const d = JSON.parse(rd.result); if(!d.days) throw 0; S = Object.assign({days:{},reviews:{},first30:{},park:''}, d); save(); renderAll(); toast('Restored'); }catch(err){ toast('That file did not look like a backup'); } };
+  rd.readAsText(f); e.target.value='';
+};
+$('exportCsv').onclick = ()=>{
+  const q = s => `"${String(s??'').replace(/"/g,'""')}"`;
+  let out = ['Date','Day',...HABITS.map(h=>h.name),'Notes'].map(q).join(',')+'\n';
+  for(let d=START; d<=END; d=addDays(d,1)){ const x=S.days[key(d)]||{};
+    out += [key(d),DAYNAMES[dow(d)],...HABITS.map(h=>x[h.id]||''),x.note||''].map(q).join(',')+'\n'; }
+  out += '\nWeek,Week starting,Training,App blocks,Community,Money review,Wins,Friction,Simplify,Priority 1,Priority 2,Priority 3,% kept\n';
+  for(let w=1;w<=12;w++){ const r=S.reviews[w]||{}, c=weekCounts(w);
+    out += [w,key(weekStart(w)),c.train,c.app,r.community||'',r.money||'',r.wins,r.friction,r.simplify,r.p1,r.p2,r.p3,weekScore(w)+'%'].map(q).join(',')+'\n'; }
+  download(`reinvention-${key(today)}.csv`, out, 'text/csv');
+};
+$('resetAll').onclick = ()=>{ if(confirm('Clear all tracker data in this browser? Back up first if unsure.')){ S={days:{},reviews:{},first30:{},park:''}; save(); renderAll(); toast('Cleared'); } };
+
+// ---------- nav ----------
+const TITLES = {today:'Today',week:'This week',review:'Weekly review',plan:'The plan'};
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+  $('hdrTitle').textContent = TITLES[b.dataset.v];
+  if(b.dataset.v==='week') renderWeek();
+  if(b.dataset.v==='review') renderReview();
+  window.scrollTo(0,0);
+});
+
+function renderAll(){ renderStatus(); renderDay(); renderWeek(); renderReview(); renderPlan(); }
+renderAll();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+if(memOnly) toast('Storage is off here. Back up before closing.');
+})();
+</script>
+</body>
+</html>
